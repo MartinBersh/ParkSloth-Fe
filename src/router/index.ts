@@ -3,6 +3,7 @@ import PaymentMethodView from '@/views/PaymentMethodView.vue';
 import AdministrationComponent from '@/components/AdministrationComponent.vue';
 import VehicleTypeView from '@/views/VehicleTypeView.vue';
 import UserComponent from '@/components/UserComponent.vue';
+import ScheduleComponent from '@/components/ScheduleComponent.vue';
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -28,7 +29,13 @@ const routes: Array<RouteRecordRaw> = [
     path: '/user',
     name: 'User',
     component: UserComponent
+  },
+  {
+    path: '/schedule',
+    name: 'Schedule',
+    component: ScheduleComponent
   }
+  
   
 ]
 

@@ -19,6 +19,8 @@
               <a href="/#/user" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="menu-item-0">Usuarios</a>
               <a href="/#/vehicle-type" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="menu-item-0">Tipos de vehiculos</a>
               <a href="/#/payment-method" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="menu-item-0">Métodos de pago</a>
+              <a href="/#/schedule" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="menu-item-0">Horarios</a>
+
             </div>
           </div>
 
