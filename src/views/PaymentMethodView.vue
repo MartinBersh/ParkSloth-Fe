@@ -5,7 +5,7 @@ import PayMethodComponent from "@/components/PaymentMethodComponent.vue";
 
 <template>
   <div class="payment-method-view">
-    <h1>Pay Methods Administration</h1>
+    <h1>Administración de metodos de pago</h1>
     <pay-method-component/>
   </div>
 </template>

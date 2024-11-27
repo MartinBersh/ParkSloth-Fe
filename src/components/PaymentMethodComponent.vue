@@ -165,18 +165,19 @@ const isActive = computed(() => currentPaymentMethod.value.status === 'A');
   </div>
 </template>
 
-
 <style scoped>
 .container {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column; /* Cambia la dirección del flujo a columna */
+  align-items: center; /* Centra los elementos en el eje horizontal */
   margin: 20px;
-  width: 100%;
+  width: 100%; /* Asegúrate de que el contenedor ocupe el 100% del ancho */
 }
 
 .payment-methods-list, .payment-methods-form {
-  flex: 1;
-  margin: 50px;
+  width: 100%; /* Asegúrate de que ocupen el 100% del ancho del contenedor */
+  max-width: 600px; /* Puedes establecer un ancho máximo para que no se extiendan demasiado */
+  margin: 20px 0; /* Margen vertical para separación */
   padding: 20px;
   border: 1px solid #e0e0e0;
   border-radius: 8px;
@@ -192,18 +193,6 @@ const isActive = computed(() => currentPaymentMethod.value.status === 'A');
 .payment-methods-list ul {
   list-style-type: none;
   padding: 0;
-}
-
-.payment-methods-list li {
-  margin-bottom: 10px;
-}
-
-.payment-methods-form input {
-  margin-bottom: 10px;
-  width: 100%;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
 }
 
 .payment-methods-form button {
