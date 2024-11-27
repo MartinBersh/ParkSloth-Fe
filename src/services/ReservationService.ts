@@ -20,13 +20,13 @@ export default {
         return response.data;
     },
 
-    async updateReservation(id: number, reservation: ReservationDto): Promise<string> {
+    async updateReservation(reservation: ReservationDto): Promise<string> {
         const response = await axios.put(`${API_URL}/update`, reservation);
         return response.data;
     },
 
-    async updateStatus(id: number, status: string): Promise<ReservationDto> {
-        const response = await axios.patch(`${API_URL}/status/${id}`, { status });
+    async updateStatus(reservation: ReservationDto): Promise<ReservationDto> {
+        const response = await axios.patch(`${API_URL}/status`,  reservation );
         return response.data;
     }
 };

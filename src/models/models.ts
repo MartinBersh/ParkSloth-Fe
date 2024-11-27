@@ -7,7 +7,7 @@ export class UserDto {
     phoneNumber?: string;
     identification?: string;
     email?: string;
-    role?: { id: number }; 
+    role?: RoleDto; 
     status?: string;
 }
 
@@ -29,7 +29,7 @@ export class AddOnServiceDto {
     idAddOnService?: number;
     name?: string;
     price?: number;
-    parkingLot?: { idParkingLot: number }; 
+    parkingLot?: ParkingLotDto; 
     status?: string;
 }
 
@@ -38,8 +38,8 @@ export class FeeDto {
     idFee?: number;
     name?: string;
     price?: number;
-    parkingLot?: { idParkingLot: number }; 
-    vehicleType?: { idVehicleType: number }; 
+    parkingLot?: ParkingLotDto; 
+    vehicleType?: VehicleTypeDto; 
     status?: string;
 }
 
@@ -52,7 +52,7 @@ export class ParkingLotDto {
     nit?: string;
     coordX?: string;
     coordY?: string;
-    user?: { id: number }; 
+    user?: UserDto; 
     status?: string;
 }
 
@@ -63,8 +63,8 @@ export class ReservationDto {
     paymentDate?: Date;
     startDate?: Date;
     endDate?: Date;
-    user?: { id: number }; 
-    paymentMethod?: { idPaymentMethod: number }; 
+    user?: UserDto; 
+    paymentMethod?: PaymentMethodDto; 
     slot?: { idSlot: number }; 
     fee?: { idFee: number }; 
     status?: string;
@@ -80,11 +80,10 @@ export class ScheduleDto {
 
 // models/ScheduleDayDto.ts
 export class ScheduleDayDto {
-    scheduleDayId?: { 
-        schedule: { idSchedule: number }; 
-        weekDay: { idWeekDay: number }; 
-        parkingLot: { idParkingLot: number }; 
-    };
+    scheduleDayId?: number;
+    schedule?: ScheduleDayDto; 
+    weekDay?: WeekDayDto; 
+    parkingLot?: ParkingLotDto; 
     status?: string;
 }
 
@@ -92,8 +91,8 @@ export class ScheduleDayDto {
 export class SlotDto {
     idSlot?: number;
     slotNumber?: number;
-    parkingLot?: { idParkingLot: number }; 
-    vehicleType?: { idVehicleType: number }; 
+    parkingLot?: ParkingLotDto; 
+    vehicleType?: VehicleTypeDto; 
     status?: string;
 }
 

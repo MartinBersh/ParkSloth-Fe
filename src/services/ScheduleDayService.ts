@@ -25,8 +25,8 @@ export default {
         return response.data;
     },
 
-    async updateStatus(id: number, status: string): Promise<ScheduleDayDto> {
-        const response = await axios.patch(`${API_URL}/status/${id}`, { status });
+    async updateStatus(scheduleDay: ScheduleDayDto): Promise<ScheduleDayDto> {
+        const response = await axios.patch(`${API_URL}/status`, scheduleDay );
         return response.data;
     }
 };

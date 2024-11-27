@@ -26,7 +26,7 @@ export default {
     },
 
     async updateStatus(id: number, status: string): Promise<FeeDto> {
-        const response = await axios.patch(`${API_URL}/status/${id}`, { status });
+        const response = await axios.patch(`${API_URL}/status`, status );
         return response.data;
     }
 };

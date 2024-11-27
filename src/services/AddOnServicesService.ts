@@ -25,8 +25,8 @@ export default {
         return response.data;
     },
 
-    async updateStatus(id: number, status: string): Promise<AddOnServiceDto> {
-        const response = await axios.patch(`${API_URL}/status/${id}`, { status });
+    async updateStatus(service: AddOnServiceDto): Promise<AddOnServiceDto> {
+        const response = await axios.patch(`${API_URL}/status`,service);
         return response.data;
     }
 };

@@ -25,8 +25,8 @@ export default {
         return response.data;
     },
 
-    async updateStatus(id: number, status: string): Promise<ParkingLotDto> {
-        const response = await axios.patch(`${API_URL}/status/${id}`, { status });
+    async updateStatus(parkingLot: ParkingLotDto): Promise<ParkingLotDto> {
+        const response = await axios.patch(`${API_URL}/status`, parkingLot);
         return response.data;
     }
 };
