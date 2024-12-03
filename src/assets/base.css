@@ -30,17 +30,16 @@ a,
 
 @media (min-width: 1024px) {
   body {
-    display: flex;
     justify-content: center; /* Centra horizontalmente */
     align-items: center; /* Centra verticalmente */
     height: 100vh; /* Asegura que el body ocupe toda la altura de la ventana */
-    margin: 0; /* Elimina márgenes por defecto */
+    margin: 5; /* Elimina márgenes por defecto */
   }
 
   #app {
     display: grid;
     grid-template-columns: 6fr 1fr;
-    padding: 0 2rem;
-    width: 300%; /* Establece el ancho del contenedor en el 60% de la pantalla */
+    padding: 0 1rem;
+    width: 500%; /* Establece el ancho del contenedor en el 60% de la pantalla */
   }
 }

@@ -65,8 +65,8 @@ export class ReservationDto {
     endDate?: Date;
     user?: UserDto; 
     paymentMethod?: PaymentMethodDto; 
-    slot?: { idSlot: number }; 
-    fee?: { idFee: number }; 
+    slot?: SlotDto; 
+    fee?: FeeDto; 
     status?: string;
 }
 

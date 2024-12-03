@@ -1,28 +1,29 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from "vue";
 import userService from "@/services/UserService";
-import { RoleDto, type UserDto } from "@/models/models"; //
+import { ParkingLotDto, UserDto  } from "@/models/models"; //
 import RoleService from "@/services/RoleService";
+import parkingLotService from "@/services/ParkingLotService";
 
-const users = ref<UserDto[]>([]);
-const newUser = ref<UserDto>({
-  idUser: 0,
-  username: '',
-  password: '',
+const parkingLots = ref<ParkingLotDto[]>([]);
+const newParkingLot = ref<ParkingLotDto>({
+  idParkingLot: 0,
   name: '',
+  address: '',
   phoneNumber: '',
-  identification: '',
-  email: '',
-  role: new RoleDto ,
+  nit: '',
+  coordX: '',
+  coordY: '',
+  user: new UserDto ,
   status: ''
 });
-const editingUser = ref<UserDto | null>(null);
+const editingParkingLot = ref<ParkingLotDto | null>(null);
 
-const roles = ref<RoleDto[]>([]);
+const users = ref<UserDto[]>([]);
 
 
 onMounted(async () => {
-  await loadRoles();
+  await loadParkingLots();
   await loadUser();
 
 
@@ -39,19 +40,19 @@ const loadUser = async () => {
 
 
 
-const loadRoles = async () => {
+const loadParkingLots = async () => {
   try {
-    roles.value = await RoleService.getRole();
-    console.log('Roles cargados:', roles.value); // Verifica que los roles se carguen correctamente
+    parkingLots.value = await parkingLotService.getParkingLots();
+    console.log('Parqueaderso cargados:', parkingLots.value); // Verifica que los roles se carguen correctamente
   } catch (error) {
     console.error('Error al cargar roles:', error);
   }
 };
 
 // Crear un nuevo método de pago
-const createUser = async () => {
+const createParkingLot = async () => {
   try {
-    await userService.createUser(newUser.value);
+    await parkingLotService.createParkingLot(newParkingLot.value);
     resetForm(); // Reiniciar el formulario
     await loadUser(); // Recargar métodos de pago
   } catch (error) {
@@ -59,32 +60,32 @@ const createUser = async () => {
   }
 };
 
-const editUser = (vehicleType: UserDto) => {
-  editingUser.value = { ...vehicleType };
+const editParkingLot = (vehicleType: ParkingLotDto) => {
+  editingParkingLot.value = { ...vehicleType };
 };
 
-const updateUser = async () => {
-  if (editingUser.value) {
+const updateParkingLot = async () => {
+  if (editingParkingLot.value) {
     try {
-      await userService.updateUser(editingUser.value);
+      await parkingLotService.updateParkingLot(editingParkingLot.value);
       resetForm();
-      await loadUser();
+      await loadParkingLots();
     } catch (error) {
       console.error('Error al actualizar:', error);
     }
   }
 };
 
-const upgradeUser = async (user: UserDto) => {
+const upgradeParkingLot = async (parkingLot: ParkingLotDto) => {
   try {
-    const newStatus = user.status === 'A' ? 'I' : 'A';
-    const upgradeUser = { ...user, status: newStatus };
+    const newStatus = parkingLot.status === 'A' ? 'I' : 'A';
+    const upgradeParkinLot = { ...parkingLot, status: newStatus };
 
-    const response = await userService.updateStatus(upgradeUser);
+    const response = await userService.updateStatus(upgradeParkinLot);
 
     const updatedStatus = response.status ? response.status : newStatus; // Asigna el nuevo estado
 
-    const index = users.value.findIndex((p: UserDto) => p.idUser === upgradeUser.idUser);
+    const index = users.value.findIndex((p: ParkingLotDto) => p.idParkingLot === upgradeParkinLot.idParkingLot);
     if (index !== -1) {
       users.value[index].status = updatedStatus;
     }
@@ -96,44 +97,44 @@ const upgradeUser = async (user: UserDto) => {
 
 // Reiniciar el formulario
 const resetForm = () => {
-  newUser.value = {
-    idUser: 0,
-    username: '',
-    password: '',
+  newParkingLot.value = {
+    idParkingLot: 0,
     name: '',
+    address: '',
     phoneNumber: '',
-    identification: '',
-    email: '',
-    role: new RoleDto,
+    nit: '',
+    coordX: '',
+    coordY: '',
+    user: new UserDto ,
     status: ''
   };
-  editingUser.value = null;
+  editingParkingLot.value = null;
 };
 
 // Computed property para filtrar métodos de pago activos
-const activeUsers = computed(() => {
-  return users.value.filter((user: UserDto) => user.status === 'A');
+const activePrkingLots = computed(() => {
+  return parkingLots.value.filter((parkingLot: ParkingLotDto) => parkingLot.status === 'A');
 });
 
 // Computed properties para manejar el formulario
-const currentUsers = computed(() => {
-  return editingUser.value || newUser.value;
+const currentParkingLot = computed(() => {
+  return editingParkingLot.value || newParkingLot.value;
 });
 
 const toggleStatus = () => {
-  if (currentUsers.value.status === 'A') {
-    currentUsers.value.status = 'I';
+  if (currentParkingLot.value.status === 'A') {
+    currentParkingLot.value.status = 'I';
   } else {
-    currentUsers.value.status = 'A';
+    currentParkingLot.value.status = 'A';
   }
 };
 
-const isActive = computed(() => currentUsers.value.status === 'A');
+const isActive = computed(() => currentParkingLot.value.status === 'A');
 
 </script>
 
 <template>
-  <div class="container mx-auto p-6 grid grid-cols-" >
+  <div class="container mx-auto p-6 grid grid-cols-2 gap 20" >
     <div class="payment-methods-list mb-8">
       <h2 class="text-2xl font-semibold mb-4">Lista de Típos de Vehiculo</h2>
 
@@ -141,30 +142,34 @@ const isActive = computed(() => currentUsers.value.status === 'A');
         <table class="user-lis">
           <thead class="bg-gray-100">
             <tr>
-              <th class="py-2 px-4 border-b text-left">Usuario</th>
               <th class="py-2 px-4 border-b text-left">Nombre</th>
+              <th class="py-2 px-4 border-b text-left">Dirección</th>
               <th class="py-2 px-4 border-b text-left">Telefono</th>
-              <th class="py-2 px-4 border-b text-left">Cedula</th>
-              <th class="py-2 px-4 border-b text-left">Correo</th>
-              <th class="py-2 px-4 border-b text-left">Rol</th>
+              <th class="py-2 px-4 border-b text-left">NIT</th>
+              <th class="py-2 px-4 border-b text-left">Coord X</th>
+              <th class="py-2 px-4 border-b text-left">Coord Y</th>
+              <th class="py-2 px-4 border-b text-left">Usuario</th>
               <th class="py-2 px-4 border-b text-left">Estado</th>
 
             </tr>
           </thead>
           <tbody>
-            <tr v-for="user in activeUsers" :key="user.idUser" class="border-b">
-              <td class="py-2 px-4">{{ user.username }}</td>
-              <td class="py-2 px-4">{{ user.name }}</td>
-              <td class="py-2 px-4">{{ user.phoneNumber }}</td>
-              <td class="py-2 px-4">{{ user.identification }}</td>
-              <td class="py-2 px-4">{{ user.email }}</td>
-              <td class="py-2 px-4">{{ user.role?.name }}</td>
-              <td class="py-2 px-4">{{ user.status }}</td>
+            <tr v-for="parkingLot in activePrkingLots" :key="parkingLot.idParkingLot" class="border-b">
+              <td class="py-2 px-4">{{ parkingLot.name }}</td>
+              <td class="py-2 px-4">{{ parkingLot.address }}</td>
+              <td class="py-2 px-4">{{ parkingLot.phoneNumber }}</td>
+              <td class="py-2 px-4">{{ parkingLot.nit }}</td>
+              <td class="py-2 px-4">{{ parkingLot.coordX }}</td>
+              <td class="py-2 px-4">{{ parkingLot.coordY }}</td>
+              <td class="py-2 px-4">{{ parkingLot.user?.name }}</td>
+              <td class="py-2 px-4">{{ parkingLot.status }}</td>
+
+
 
               <td class="py-2 px-4">
-                <button @click="editUser(user)"
+                <button @click="editParkingLot(parkingLot)"
                   class="bg-blue-500 text-white py-1 px-3 rounded hover:bg-blue-600 mr-2">Editar</button>
-                <button @click="upgradeUser(user)"
+                <button @click="upgradeParkingLot(parkingLot)"
                   class="bg-red-500 text-white py-1 px-3 rounded hover:bg-red-600">Eliminar</button>
               </td>
             </tr>
@@ -173,39 +178,43 @@ const isActive = computed(() => currentUsers.value.status === 'A');
       </div>
 
       <!-- Condición para mostrar mensaje cuando no hay métodos de pago activos -->
-      <p v-if="!activeUsers.length" class="text-center text-gray-500 mt-4">No hay usuarios disponibles.</p>
+      <p v-if="!activePrkingLots.length" class="text-center text-gray-500 mt-4">No hay parqueaderos disponibles.</p>
     </div>
 
     <div class="payment-methods-form bg-white shadow-md p-6 rounded-lg">
-      <h2 class="text-2xl font-semibold mb-4">{{ editingUser ? 'Editar Usuario' : 'Crear Usuario' }}</h2>
-
+      <h2 class="text-2xl font-semibold mb-4">{{ editingParkingLot ? 'Editar Parqueadero' : 'Crear Parqueadero' }}</h2>
       <div class="mb-4">
-        <input v-model="currentUsers.username" type="text" placeholder="Nombre de usuario"
+        <input v-model="currentParkingLot.name" type="text" placeholder="Nombre de usuario"
           class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
       </div>
       <div class="mb-4">
-        <input v-model="currentUsers.name" type="text" placeholder="Nombre"
+        <input v-model="currentParkingLot.address" type="text" placeholder="Nombre"
           class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
       </div>
       <div class="mb-4">
-        <input v-model="currentUsers.phoneNumber" type="text" placeholder="Telefono"
-          class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+        <input v-model="currentParkingLot.phoneNumber" type="text" placeholder="Telefono"
+          class="w-full p-2 border border-gray-3    00 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
       </div>
       <div class="mb-4">
-        <input v-model="currentUsers.identification" type="text" placeholder="Cedula"
-          class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
-      </div>
-
-      <div class="mb-4">
-        <input v-model="currentUsers.email" type="text" placeholder="Correo"
+        <input v-model="currentParkingLot.nit" type="text" placeholder="Cedula"
           class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
       </div>
 
       <div class="mb-4">
-        <select class="form-select" v-model="currentUsers.role.idRole" required>
-          <option disabled value="">Select User Role</option>
-          <option v-for="role in roles" :key="role.idRole" :value="role.idRole">
-            {{ role.name }}
+        <input v-model="currentParkingLot.coordX" type="text" placeholder="Correo"
+          class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+      </div>
+
+      <div class="mb-4">
+        <input v-model="currentParkingLot.coordY" type="text" placeholder="Correo"
+          class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+      </div>
+
+      <div class="mb-4">
+        <select class="form-select" v-model="currentParkingLot.user?.idUser" required>
+          <option disabled value="">Select User</option>
+          <option v-for="user in users" :key="user.idUser" :value="user.idUser">
+            {{ user.name }}
           </option>
         </select>
       </div>
@@ -216,12 +225,12 @@ const isActive = computed(() => currentUsers.value.status === 'A');
       </div>
 
       <div class="flex items-center space-x-4">
-        <button @click="editingUser ? updateUser() : createUser()"
+        <button @click="editingParkingLot ? updateParkingLot() : createParkingLot()"
           class="bg-green-500 text-white py-2 px-6 rounded hover:bg-green-600">
-          {{ editingUser ? 'Actualizar Usuario' : 'Crear Usuario' }}
+          {{ editingParkingLot ? 'Actualizar Parqueadero' : 'Crear Parqueadero' }}
         </button>
 
-        <button @click="resetForm" v-if="editingUser"
+        <button @click="resetForm" v-if="editingParkingLot"
           class="bg-gray-400 text-white py-2 px-6 rounded hover:bg-gray-500">
           Cancelar
         </button>
