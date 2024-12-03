@@ -6,15 +6,16 @@ import RoleService from "@/services/RoleService";
 
 const users = ref<UserDto[]>([]);
 const newUser = ref<UserDto>({
-  idUser: 0,
-  username: '',
-  password: '',
-  name: '',
-  phoneNumber: '',
-  identification: '',
-  email: '',
-  role: new RoleDto ,
-  status: ''
+    idReservation: number,
+    reservationDate: Date,
+    paymentDate: Date,
+    startDate: Date,
+    endDate: Date,
+    user: UserDto,
+    paymentMethod: PaymentMethodDto,
+    slot: SlotDto,
+    fee: FeeDto,
+    status: string
 });
 const editingUser = ref<UserDto | null>(null);
 
