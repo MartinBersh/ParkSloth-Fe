@@ -3,8 +3,12 @@ import PaymentMethodView from '@/views/PaymentMethodView.vue';
 import AdministrationComponent from '@/components/AdministrationComponent.vue';
 import VehicleTypeView from '@/views/VehicleTypeView.vue';
 import UserComponent from '@/components/UserComponent.vue';
+<<<<<<< HEAD
 import ParkingLotComponent from '@/components/ParkingLotComponent.vue';
 import AddOnServiceComponent from '@/components/AddOnServiceComponent.vue';
+=======
+import ScheduleComponent from '@/components/ScheduleComponent.vue';
+>>>>>>> develop
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -32,6 +36,7 @@ const routes: Array<RouteRecordRaw> = [
     component: UserComponent
   },
   {
+<<<<<<< HEAD
     path: '/parking-lot',
     name: 'ParkingLot',
     component: ParkingLotComponent
@@ -40,8 +45,14 @@ const routes: Array<RouteRecordRaw> = [
     path: '/add-on-service',
     name: 'AddOnService',
     component: AddOnServiceComponent
+=======
+    path: '/schedule',
+    name: 'Schedule',
+    component: ScheduleComponent
+>>>>>>> develop
   }
 
+  
   
 ]
 
