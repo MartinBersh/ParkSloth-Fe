@@ -28,5 +28,9 @@ export default {
     async updateStatus(user: UserDto): Promise<UserDto> {
         const response = await axios.patch(`${API_URL}/status`, user);
         return response.data;
+    },
+    async getUser(user: UserDto): Promise<UserDto>{
+        const response = await axios.post(`${API_URL}/getUser`, user);
+        return response.data;
     }
 };

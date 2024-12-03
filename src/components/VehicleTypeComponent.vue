@@ -6,9 +6,11 @@ import type { VehicleTypeDto } from "@/models/models"; //
 const vehicleTypes = ref<VehicleTypeDto[]>([]);
 const newVehicleType = ref<VehicleTypeDto>({ idVehicleType: 0, name: '', status: '' });
 const editingVehicleType = ref<VehicleTypeDto | null>(null);
-
+const role = localStorage.getItem('userRole');
 onMounted(async () => {
   await loadVehicleType();
+  console.log(role);
+  
 });
 
 // Cargar paymentMethods desde el servicio
@@ -92,7 +94,7 @@ const isActive = computed(() => currentVehicleType.value.status === 'A');
 </script>
 
 <template>
-  <div class="container mx-auto p-6">
+  <div  v-if="role == 'ROLE_ADMIN'" class="container mx-auto p-6">
     <div class="payment-methods-list mb-8">
       <h2 class="text-2xl font-semibold mb-4">Lista de Típos de Vehiculo</h2>
       

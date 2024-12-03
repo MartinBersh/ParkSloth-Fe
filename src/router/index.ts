@@ -4,8 +4,12 @@ import AdministrationComponent from '@/components/AdministrationComponent.vue';
 import VehicleTypeView from '@/views/VehicleTypeView.vue';
 import UserComponent from '@/components/UserComponent.vue';
 import ScheduleComponent from '@/components/ScheduleComponent.vue';
-
+import LoginComponent from '@/components/LoginComponent.vue';
 const routes: Array<RouteRecordRaw> = [
+  {
+    path: '/',
+    redirect: '/login', 
+  },
   {
     path: '/about',
     name: 'about',
@@ -29,6 +33,11 @@ const routes: Array<RouteRecordRaw> = [
     path: '/user',
     name: 'User',
     component: UserComponent
+  },
+  {
+    path: '/login',
+    name: 'Login',
+    component: LoginComponent,
   },
   {
     path: '/schedule',
