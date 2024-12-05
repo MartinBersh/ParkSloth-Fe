@@ -23,14 +23,15 @@
               <a href="/#/add-on-service" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="menu-item-0">Servicios adicionales</a>
               <a href="/#/slot" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="menu-item-0">Espacios de Parqueadero</a>
               <a href="/#/parking-lot" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="menu-item-0">Parqueaderos</a>
+              <a href="/#/fee" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="menu-item-0">Tarifas</a>
+              <a href="/#/reservation" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="menu-item-0">Rerservas</a>
               <a href="/#/schedule" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="menu-item-0">Horarios</a>
             </div>
             <div v-if="role =='ROLE_USER'" class="py-1" role="none">
               <a href="/#/schedule" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="menu-item-0">Horarios</a>
             </div>
             <div v-if="role =='ROLE_ADMINP'" class="py-1" role="none">
-              <a href="/#/fee" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="menu-item-0">Tarifas</a>
-              <a href="/#/reservation" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="menu-item-0">Rerservas</a>
+              
 
             </div>
           </div>
