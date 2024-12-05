@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from "vue";
 import { AddOnServiceDto, ParkingLotDto } from "@/models/models"; //
-import RoleService from "@/services/RoleService";
 import parkingLotService from "@/services/ParkingLotService";
 import addOnServicesService from "@/services/AddOnServicesService";
 
@@ -176,7 +175,7 @@ const isActive = computed(() => currentAddOnService.value.status === 'A');
           class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
       </div>
       <div class="mb-4">
-        <select class="form-select" v-model="currentAddOnService.parkingLot?.name" required>
+        <select class="form-select" v-model="currentAddOnService.parkingLot.name" required>
           <option disabled value="">Select User</option>
           <option v-for="parkingLot in parkingLots" :key="parkingLot.idParkingLot" :value="parkingLot.idParkingLot">
             {{ parkingLot.name }}

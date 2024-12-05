@@ -2,7 +2,6 @@
 import { computed, onMounted, ref } from "vue";
 import userService from "@/services/UserService";
 import { ParkingLotDto, UserDto  } from "@/models/models"; //
-import RoleService from "@/services/RoleService";
 import parkingLotService from "@/services/ParkingLotService";
 
 const parkingLots = ref<ParkingLotDto[]>([]);
@@ -29,12 +28,12 @@ onMounted(async () => {
 
 });
 
-// Cargar paymentMethods desde el servicio
+
 const loadUser = async () => {
   try {
     users.value = await userService.getUsers();
   } catch (error) {
-    console.error('Error al cargar métodos de pago:', error);
+    console.error('Error al cargar usuarios:', error);
   }
 };
 
@@ -49,7 +48,7 @@ const loadParkingLots = async () => {
   }
 };
 
-// Crear un nuevo método de pago
+// Crear un nuevo parqueadero
 const createParkingLot = async () => {
   try {
     await parkingLotService.createParkingLot(newParkingLot.value);
@@ -85,9 +84,9 @@ const upgradeParkingLot = async (parkingLot: ParkingLotDto) => {
 
     const updatedStatus = response.status ? response.status : newStatus; // Asigna el nuevo estado
 
-    const index = users.value.findIndex((p: ParkingLotDto) => p.idParkingLot === upgradeParkinLot.idParkingLot);
+    const index = parkingLots.value.findIndex((p: ParkingLotDto) => p.idParkingLot === upgradeParkinLot.idParkingLot);
     if (index !== -1) {
-      users.value[index].status = updatedStatus;
+      parkingLots.value[index].status = updatedStatus;
     }
 
   } catch (error) {
@@ -211,7 +210,7 @@ const isActive = computed(() => currentParkingLot.value.status === 'A');
       </div>
 
       <div class="mb-4">
-        <select class="form-select" v-model="currentParkingLot.user?.idUser" required>
+        <select class="form-select" v-model="currentParkingLot.user.idUser" required>
           <option disabled value="">Select User</option>
           <option v-for="user in users" :key="user.idUser" :value="user.idUser">
             {{ user.name }}
