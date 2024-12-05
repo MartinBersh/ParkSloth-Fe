@@ -73,8 +73,8 @@ export class ReservationDto {
 // models/ScheduleDto.ts
 export class ScheduleDto {
     idSchedule?: number;
-    startSchedule?: number;
-    endSchedule?: number;
+    startSchedule?: string;
+    endSchedule?: string;
     status?: string;
 }
 

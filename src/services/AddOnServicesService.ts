@@ -16,7 +16,7 @@ export default {
     },
 
     async createAddOnService(service: AddOnServiceDto): Promise<string> {
-        const response = await axios.post(`${API_URL}/new`, service);
+        const response = await axios.post(`${API_URL}/create`, service);
         return response.data;
     },
 

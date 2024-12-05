@@ -1,93 +1,124 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from "vue";
 import userService from "@/services/UserService";
-import { RoleDto, type UserDto } from "@/models/models"; //
-import RoleService from "@/services/RoleService";
+import { FeeDto, PaymentMethodDto, ReservationDto, SlotDto, UserDto } from "@/models/models"; //
+import PaymentMethodService from "@/services/PaymentMethodService";
+import FeeService from "@/services/FeeService";
+import SlotService from "@/services/SlotService";
+import ReservationService from "@/services/ReservationService";
+
+const reservations = ref<ReservationDto[]>([]);
+const newReservation = ref<ReservationDto>({
+    idReservation: 0,
+    reservationDate: new Date(),
+    paymentDate: new Date(),
+    startDate: new Date(),
+    endDate: new Date(),
+    user: new UserDto,
+    paymentMethod: new PaymentMethodDto,
+    slot: new SlotDto,
+    fee: new FeeDto,
+    status: ''
+});
+const editingReservation = ref<ReservationDto | null>(null);
 
 const users = ref<UserDto[]>([]);
-const newUser = ref<UserDto>({
-    idReservation: number,
-    reservationDate: Date,
-    paymentDate: Date,
-    startDate: Date,
-    endDate: Date,
-    user: UserDto,
-    paymentMethod: PaymentMethodDto,
-    slot: SlotDto,
-    fee: FeeDto,
-    status: string
-});
-const editingUser = ref<UserDto | null>(null);
+const slots = ref<SlotDto[]>([]);
+const fees = ref<FeeDto[]>([]);
+const paymentMethods = ref<PaymentMethodDto[]>([]);
 
-const roles = ref<RoleDto[]>([]);
 
 
 onMounted(async () => {
-  await loadRoles();
+  await loadPaymentMethod();
   await loadUser();
-
+  await loadFee();
+  await loadReservation();
+  await loadSlot();
 
 });
 
-// Cargar paymentMethods desde el servicio
-const loadUser = async () => {
+const loadReservation = async () => {
+  try {
+    reservations.value = await ReservationService.getReservations();
+  } catch (error) {
+    console.error('Error al cargar roles:', error);
+
+  }
+
+};const loadUser = async () => {
   try {
     users.value = await userService.getUsers();
   } catch (error) {
-    console.error('Error al cargar métodos de pago:', error);
+    console.error('Error al cargar roles:', error);
+
+  }
+};
+const loadPaymentMethod = async () => {
+  try {
+    paymentMethods.value = await PaymentMethodService.getPaymentMethod();
+  } catch (error) {
+    console.error('Error al cargar roles:', error);
+  }
+};
+
+const loadFee = async () => {
+  try {
+    fees.value = await FeeService.getFees();
+  } catch (error) {
+    console.error('Error al cargar roles:', error);
   }
 };
 
 
 
-const loadRoles = async () => {
+const loadSlot = async () => {
   try {
-    roles.value = await RoleService.getRole();
-    console.log('Roles cargados:', roles.value); // Verifica que los roles se carguen correctamente
+    slots.value = await SlotService.getSlots();
   } catch (error) {
     console.error('Error al cargar roles:', error);
   }
 };
 
 // Crear un nuevo método de pago
-const createUser = async () => {
+const createReservation = async () => {
   try {
-    await userService.createUser(newUser.value);
+    await ReservationService.createReservation(newReservation.value);
     resetForm(); // Reiniciar el formulario
-    await loadUser(); // Recargar métodos de pago
+    await loadReservation(); // Recargar métodos de pago
   } catch (error) {
     console.error('Error al crear:', error);
   }
 };
 
-const editUser = (vehicleType: UserDto) => {
-  editingUser.value = { ...vehicleType };
+const editReservation = (reservation: ReservationDto) => {
+  editingReservation.value = { ...reservation };
 };
 
-const updateUser = async () => {
-  if (editingUser.value) {
+const updateReservation = async () => {
+  if (editingReservation.value) {
     try {
-      await userService.updateUser(editingUser.value);
+      await userService.updateUser(editingReservation.value);
       resetForm();
-      await loadUser();
+      await loadReservation();
     } catch (error) {
       console.error('Error al actualizar:', error);
     }
   }
 };
 
-const upgradeUser = async (user: UserDto) => {
+const upgradeReservation = async (reservation: ReservationDto) => {
   try {
-    const newStatus = user.status === 'A' ? 'I' : 'A';
-    const upgradeUser = { ...user, status: newStatus };
+    const newStatus = reservation.status === 'A' ? 'I' : 'A';
+    const upgradeReservation = { ...reservation, status: newStatus };
 
-    const response = await userService.updateStatus(upgradeUser);
+    const response = await ReservationService.updateStatus(upgradeReservation);
 
     const updatedStatus = response.status ? response.status : newStatus; // Asigna el nuevo estado
 
-    const index = users.value.findIndex((p: UserDto) => p.idUser === upgradeUser.idUser);
+    const index = reservations.value.findIndex((p: ReservationDto) => p.idReservation === upgradeReservation.idReservation);
     if (index !== -1) {
-      users.value[index].status = updatedStatus;
+      reservations.value[index].status = updatedStatus;
     }
 
   } catch (error) {
@@ -97,75 +128,86 @@ const upgradeUser = async (user: UserDto) => {
 
 // Reiniciar el formulario
 const resetForm = () => {
-  newUser.value = {
-    idUser: 0,
-    username: '',
-    password: '',
-    name: '',
-    phoneNumber: '',
-    identification: '',
-    email: '',
-    role: new RoleDto,
+  newReservation.value = {
+    idReservation: 0,
+    reservationDate: new Date(),
+    paymentDate: new Date(),
+    startDate: new Date(),
+    endDate: new Date(),
+    user: new UserDto,
+    paymentMethod: new PaymentMethodDto,
+    slot: new SlotDto,
+    fee: new FeeDto,
     status: ''
   };
-  editingUser.value = null;
+  editingReservation.value = null;
 };
 
 // Computed property para filtrar métodos de pago activos
-const activeUsers = computed(() => {
-  return users.value.filter((user: UserDto) => user.status === 'A');
+const activeReservation = computed(() => {
+  return reservations.value.filter((reservation: ReservationDto) => reservation.status === 'A');
 });
 
 // Computed properties para manejar el formulario
-const currentUsers = computed(() => {
-  return editingUser.value || newUser.value;
+const currentReservation = computed(() => {
+  return editingReservation.value || newReservation.value;
 });
 
 const toggleStatus = () => {
-  if (currentUsers.value.status === 'A') {
-    currentUsers.value.status = 'I';
+  if (currentReservation.value.status === 'A') {
+    currentReservation.value.status = 'I';
   } else {
-    currentUsers.value.status = 'A';
+    currentReservation.value.status = 'A';
   }
 };
 
-const isActive = computed(() => currentUsers.value.status === 'A');
+const formatDate = (date: string | Date | undefined): string => {
+  if (!date) return '';
+  return new Date(date).toLocaleDateString('es-ES'); 
+};
+
+const isActive = computed(() => currentReservation.value.status === 'A');
 
 </script>
 
 <template>
   <div class="container mx-auto p-6 grid grid-cols-" >
     <div class="payment-methods-list mb-8">
-      <h2 class="text-2xl font-semibold mb-4">Lista de Típos de Vehiculo</h2>
+      <h2 class="text-2xl font-semibold mb-4">Lista de reservaciones</h2>
 
       <div class="overflow-x-auto bg-white shadow-md rounded-lg">
         <table class="user-lis">
           <thead class="bg-gray-100">
             <tr>
+              <th class="py-2 px-4 border-b text-left">Fecha de reserva</th>
+              <th class="py-2 px-4 border-b text-left">Fecha de pago</th>
+              <th class="py-2 px-4 border-b text-left">Fecha de inicio</th>
+              <th class="py-2 px-4 border-b text-left">Fecha final</th>
               <th class="py-2 px-4 border-b text-left">Usuario</th>
-              <th class="py-2 px-4 border-b text-left">Nombre</th>
-              <th class="py-2 px-4 border-b text-left">Telefono</th>
-              <th class="py-2 px-4 border-b text-left">Cedula</th>
-              <th class="py-2 px-4 border-b text-left">Correo</th>
-              <th class="py-2 px-4 border-b text-left">Rol</th>
+              <th class="py-2 px-4 border-b text-left">Metodo de pago</th>
+              <th class="py-2 px-4 border-b text-left">Parqueadero </th>
+              <th class="py-2 px-4 border-b text-left">Tarifa </th>
               <th class="py-2 px-4 border-b text-left">Estado</th>
+
 
             </tr>
           </thead>
           <tbody>
-            <tr v-for="user in activeUsers" :key="user.idUser" class="border-b">
-              <td class="py-2 px-4">{{ user.username }}</td>
-              <td class="py-2 px-4">{{ user.name }}</td>
-              <td class="py-2 px-4">{{ user.phoneNumber }}</td>
-              <td class="py-2 px-4">{{ user.identification }}</td>
-              <td class="py-2 px-4">{{ user.email }}</td>
-              <td class="py-2 px-4">{{ user.role?.name }}</td>
-              <td class="py-2 px-4">{{ user.status }}</td>
+            <tr v-for="reservation in activeReservation" :key="reservation.idReservation" class="border-b">
+              <td class="py-2 px-4">{{ formatDate(reservation.reservationDate) }}</td>
+              <td class="py-2 px-4">{{ formatDate(reservation.paymentDate) }}</td>
+              <td class="py-2 px-4">{{ formatDate(reservation.startDate) }}</td>
+              <td class="py-2 px-4">{{ formatDate(reservation.endDate) }}</td>
+              <td class="py-2 px-4">{{ reservation.user?.name }}</td>
+              <td class="py-2 px-4">{{ reservation.paymentMethod?.name }}</td>
+              <td class="py-2 px-4">{{ reservation.slot?.slotNumber }}</td>
+              <td class="py-2 px-4">{{ reservation.fee?.name }}</td>
+              <td class="py-2 px-4">{{ reservation.status }}</td>
 
               <td class="py-2 px-4">
-                <button @click="editUser(user)"
+                <button @click="editReservation(reservation)"
                   class="bg-blue-500 text-white py-1 px-3 rounded hover:bg-blue-600 mr-2">Editar</button>
-                <button @click="upgradeUser(user)"
+                <button @click="upgradeReservation(reservation)"
                   class="bg-red-500 text-white py-1 px-3 rounded hover:bg-red-600">Eliminar</button>
               </td>
             </tr>
@@ -174,39 +216,87 @@ const isActive = computed(() => currentUsers.value.status === 'A');
       </div>
 
       <!-- Condición para mostrar mensaje cuando no hay métodos de pago activos -->
-      <p v-if="!activeUsers.length" class="text-center text-gray-500 mt-4">No hay usuarios disponibles.</p>
+      <p v-if="!activeReservation.length" class="text-center text-gray-500 mt-4">No hay reservas disponibles.</p>
     </div>
 
     <div class="payment-methods-form bg-white shadow-md p-6 rounded-lg">
-      <h2 class="text-2xl font-semibold mb-4">{{ editingUser ? 'Editar Usuario' : 'Crear Usuario' }}</h2>
+      <h2 class="text-2xl font-semibold mb-4">{{ editingReservation ? 'Editar Reserva' : 'Crear Reserva' }}</h2>
+
+      <div class="grid gap-6 p-4 bg-white rounded-lg shadow-md">
+
+        <div class="form-group flex flex-col">
+    <label class="mb-2 text-sm font-medium text-gray-700">Reservation Date:</label>
+    <input 
+      type="date" 
+      v-model="currentReservation.reservationDate" 
+      required 
+      class="p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+    />
+  </div>
+
+  <div class="form-group flex flex-col">
+    <label class="mb-2 text-sm font-medium text-gray-700">Payment Date:</label>
+    <input 
+      type="date" 
+      v-model="currentReservation.paymentDate" 
+      required 
+      class="p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+    />
+  </div>
+
+  <div class="form-group flex flex-col">
+    <label class="mb-2 text-sm font-medium text-gray-700">Start Date:</label>
+    <input 
+      type="date" 
+      v-model="currentReservation.startDate" 
+      required 
+      class="p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+    />
+  </div>
+
+  <div class="form-group flex flex-col">
+    <label class="mb-2 text-sm font-medium text-gray-700">End Date:</label>
+    <input 
+      type="date" 
+      v-model="currentReservation.endDate" 
+      required 
+      class="p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+    />
+  </div>
+
+</div>
+
 
       <div class="mb-4">
-        <input v-model="currentUsers.username" type="text" placeholder="Nombre de usuario"
-          class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+        <select class="form-select" v-model="currentReservation.user.idUser" required>
+          <option disabled value="">Seleccione Usuario</option>
+          <option v-for="user in users" :key="user.idUser" :value="user.idUser">
+            {{ user.name }}
+          </option>
+        </select>
       </div>
       <div class="mb-4">
-        <input v-model="currentUsers.name" type="text" placeholder="Nombre"
-          class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+        <select class="form-select" v-model="currentReservation.paymentMethod.idPaymentMethod" required>
+          <option disabled value="">Select Metodo de Pago</option>
+          <option v-for="mehtod in paymentMethods" :key="mehtod.idPaymentMethod" :value="mehtod.idPaymentMethod">
+            {{ mehtod.name }}
+          </option>
+        </select>
       </div>
       <div class="mb-4">
-        <input v-model="currentUsers.phoneNumber" type="text" placeholder="Telefono"
-          class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
-      </div>
-      <div class="mb-4">
-        <input v-model="currentUsers.identification" type="text" placeholder="Cedula"
-          class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+        <select class="form-select" v-model="currentReservation.slot.idSlot" required>
+          <option disabled value="">Select Espacio de Parqueo</option>
+          <option v-for="slot in slots" :key="slot.idSlot" :value="slot.idSlot">
+            {{ slot.slotNumber }}
+          </option>
+        </select>
       </div>
 
       <div class="mb-4">
-        <input v-model="currentUsers.email" type="text" placeholder="Correo"
-          class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
-      </div>
-
-      <div class="mb-4">
-        <select class="form-select" v-model="currentUsers.role.idRole" required>
-          <option disabled value="">Select User Role</option>
-          <option v-for="role in roles" :key="role.idRole" :value="role.idRole">
-            {{ role.name }}
+        <select class="form-select" v-model="currentReservation.fee.idFee" required>
+          <option disabled value="">Select Trifa</option>
+          <option v-for="fee in fees" :key="fee.idFee" :value="fee.idFee">
+            {{ fee.name }}
           </option>
         </select>
       </div>
@@ -217,12 +307,12 @@ const isActive = computed(() => currentUsers.value.status === 'A');
       </div>
 
       <div class="flex items-center space-x-4">
-        <button @click="editingUser ? updateUser() : createUser()"
+        <button @click="editingReservation ? updateReservation() : createReservation()"
           class="bg-green-500 text-white py-2 px-6 rounded hover:bg-green-600">
-          {{ editingUser ? 'Actualizar Usuario' : 'Crear Usuario' }}
+          {{ editingReservation ? 'Actualizar Reserva' : 'Crear Reserva' }}
         </button>
 
-        <button @click="resetForm" v-if="editingUser"
+        <button @click="resetForm" v-if="editingReservation"
           class="bg-gray-400 text-white py-2 px-6 rounded hover:bg-gray-500">
           Cancelar
         </button>

@@ -16,7 +16,7 @@ export default {
     },
 
     async createFee(fee: FeeDto): Promise<string> {
-        const response = await axios.post(`${API_URL}/new`, fee);
+        const response = await axios.post(`${API_URL}/create`, fee);
         return response.data;
     },
 
@@ -25,8 +25,8 @@ export default {
         return response.data;
     },
 
-    async updateStatus(id: number, status: string): Promise<FeeDto> {
-        const response = await axios.patch(`${API_URL}/status`, status );
+    async updateStatus(fee : FeeDto): Promise<FeeDto> {
+        const response = await axios.patch(`${API_URL}/status`, fee );
         return response.data;
     }
 };

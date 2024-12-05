@@ -4,7 +4,7 @@ import scheduleService from "@/services/ScheduleService";
 import type { ScheduleDto } from "@/models/models"; //
 
 const schedules = ref<ScheduleDto[]>([]);
-const newSchedule = ref<ScheduleDto>({ idSchdule: 0, startSchedule: 0, endSchedule: 0, status: '' });
+const newSchedule = ref<ScheduleDto>({ idSchedule: 0, startSchedule: '', endSchedule: '', status: '' });
 const editingSchedule = ref<ScheduleDto | null>(null);
 
 onMounted(async () => {
@@ -54,9 +54,9 @@ const upgradeScheduleStatus = async (schedule: ScheduleDto) => {
 
     const response = await scheduleService.updateStatus(updatedSchedule);
     
-    const index = schedules.value.findIndex((p: ScheduleDto) => p.idSchdule === updatedSchedule.idSchdule);
+    const index = schedules.value.findIndex((p: ScheduleDto) => p.idSchedule === updatedSchedule.idSchedule);
     if (index !== -1) {
-        schedules.value[index].status = response; 
+        schedules.value[index].status = response.status; 
     }
 
   } catch (error) {
@@ -66,7 +66,7 @@ const upgradeScheduleStatus = async (schedule: ScheduleDto) => {
 
 // Reiniciar el formulario
 const resetForm = () => {
-  newSchedule.value = { idSchdule: 0, startSchedule: 0, endSchedule: 0, status: 'I'  };
+  newSchedule.value = { idSchedule: 0, startSchedule: 0, endSchedule: 0, status: 'I'  };
   editingSchedule.value = null;
 };
 // Computed property para filtrar métodos de pago activos
@@ -107,10 +107,10 @@ const isActive = computed(() => currentSchedule.value.status === 'A');
             </tr>
           </thead>
           <tbody>
-            <tr v-for="schedule in activeSchedules" :key="schedule.idPaymentMethod" class="border-b">
-              <td class="py-2 px-4">{{ paymentMethod.startSchedule }}</td>
-              <td class="py-2 px-4">{{ paymentMethod.endSchedule }}</td>
-              <td class="py-2 px-4">{{ paymentMethod.status }}</td>
+            <tr v-for="schedule in activeSchedules" :key="schedule.idSchedule" class="border-b">
+              <td class="py-2 px-4">{{ schedule.startSchedule }}</td>
+              <td class="py-2 px-4">{{ schedule.endSchedule }}</td>
+              <td class="py-2 px-4">{{ schedule.status }}</td>
               <td class="py-2 px-4">
                 <button @click="editSchedule(schedule)" class="bg-blue-500 text-white py-1 px-3 rounded hover:bg-blue-600 mr-2">Editar</button>
                 <button @click="upgradeScheduleStatus(schedule)" class="bg-red-500 text-white py-1 px-3 rounded hover:bg-red-600">Eliminar</button>
@@ -153,32 +153,6 @@ const isActive = computed(() => currentSchedule.value.status === 'A');
         />
         <label for="status" class="text-sm text-gray-700">Activo</label>
       </div>
-      
-<form class="max-w-[16rem] mx-auto grid grid-cols-2 gap-4">
-    <div>
-        <label for="start-time" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Start time:</label>
-        <div class="relative">
-            <div class="absolute inset-y-0 end-0 top-0 flex items-center pe-3.5 pointer-events-none">
-                <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
-                    <path fill-rule="evenodd" d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm11-4a1 1 0 1 0-2 0v4a1 1 0 0 0 .293.707l3 3a1 1 0 0 0 1.414-1.414L13 11.586V8Z" clip-rule="evenodd"/>
-                </svg>
-            </div>
-            <input type="time" id="start-time" class="bg-gray-50 border leading-none border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" min="09:00" max="18:00" value="00:00" required />
-        </div>
-    </div>
-    <div>
-        <label for="end-time" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">End time:</label>
-        <div class="relative">
-            <div class="absolute inset-y-0 end-0 top-0 flex items-center pe-3.5 pointer-events-none">
-                <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
-                    <path fill-rule="evenodd" d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm11-4a1 1 0 1 0-2 0v4a1 1 0 0 0 .293.707l3 3a1 1 0 0 0 1.414-1.414L13 11.586V8Z" clip-rule="evenodd"/>
-                </svg>
-            </div>
-            <input type="time" id="end-time" class="bg-gray-50 border leading-none border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" min="09:00" max="18:00" value="00:00" required />
-        </div>
-    </div>
-</form>
-
 
       <div class="flex items-center space-x-4">
         <button 

@@ -3,12 +3,12 @@ import PaymentMethodView from '@/views/PaymentMethodView.vue';
 import AdministrationComponent from '@/components/AdministrationComponent.vue';
 import VehicleTypeView from '@/views/VehicleTypeView.vue';
 import UserComponent from '@/components/UserComponent.vue';
-<<<<<<< HEAD
 import ParkingLotComponent from '@/components/ParkingLotComponent.vue';
 import AddOnServiceComponent from '@/components/AddOnServiceComponent.vue';
-=======
+import FeeComponent from '@/components/FeeComponent.vue';
 import ScheduleComponent from '@/components/ScheduleComponent.vue';
->>>>>>> develop
+import ReservationComponent from '@/components/ReservationComponent.vue';
+import SlotComponent from '@/components/SlotComponent.vue';
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -36,7 +36,6 @@ const routes: Array<RouteRecordRaw> = [
     component: UserComponent
   },
   {
-<<<<<<< HEAD
     path: '/parking-lot',
     name: 'ParkingLot',
     component: ParkingLotComponent
@@ -45,11 +44,26 @@ const routes: Array<RouteRecordRaw> = [
     path: '/add-on-service',
     name: 'AddOnService',
     component: AddOnServiceComponent
-=======
+  },
+  {
     path: '/schedule',
     name: 'Schedule',
     component: ScheduleComponent
->>>>>>> develop
+  },
+  {
+    path: '/fee',
+    name: 'Fee',
+    component: FeeComponent
+  },
+  {
+    path: '/reservation',
+    name: 'Rerservation',
+    component: ReservationComponent
+  },
+  {
+    path: '/slot',
+    name: 'Slot',
+    component: SlotComponent
   }
 
   

@@ -2,7 +2,6 @@
 import { computed, onMounted, ref } from "vue";
 import userService from "@/services/UserService";
 import { ParkingLotDto, UserDto  } from "@/models/models"; //
-import RoleService from "@/services/RoleService";
 import parkingLotService from "@/services/ParkingLotService";
 
 const parkingLots = ref<ParkingLotDto[]>([]);
@@ -81,13 +80,13 @@ const upgradeParkingLot = async (parkingLot: ParkingLotDto) => {
     const newStatus = parkingLot.status === 'A' ? 'I' : 'A';
     const upgradeParkinLot = { ...parkingLot, status: newStatus };
 
-    const response = await userService.updateStatus(upgradeParkinLot);
+    const response = await parkingLotService.updateStatus(upgradeParkinLot);
 
     const updatedStatus = response.status ? response.status : newStatus; // Asigna el nuevo estado
 
-    const index = users.value.findIndex((p: ParkingLotDto) => p.idParkingLot === upgradeParkinLot.idParkingLot);
+    const index = parkingLots.value.findIndex((p: ParkingLotDto) => p.idParkingLot === upgradeParkinLot.idParkingLot);
     if (index !== -1) {
-      users.value[index].status = updatedStatus;
+      parkingLots.value[index].status = updatedStatus;
     }
 
   } catch (error) {
@@ -136,7 +135,7 @@ const isActive = computed(() => currentParkingLot.value.status === 'A');
 <template>
   <div class="container mx-auto p-6 grid grid-cols-2 gap 20" >
     <div class="payment-methods-list mb-8">
-      <h2 class="text-2xl font-semibold mb-4">Lista de Típos de Vehiculo</h2>
+      <h2 class="text-2xl font-semibold mb-4">Lista de Parqueaderos</h2>
 
       <div class="overflow-x-auto bg-white shadow-md rounded-lg">
         <table class="user-lis">
@@ -184,11 +183,11 @@ const isActive = computed(() => currentParkingLot.value.status === 'A');
     <div class="payment-methods-form bg-white shadow-md p-6 rounded-lg">
       <h2 class="text-2xl font-semibold mb-4">{{ editingParkingLot ? 'Editar Parqueadero' : 'Crear Parqueadero' }}</h2>
       <div class="mb-4">
-        <input v-model="currentParkingLot.name" type="text" placeholder="Nombre de usuario"
+        <input v-model="currentParkingLot.name" type="text" placeholder="Nombre"
           class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
       </div>
       <div class="mb-4">
-        <input v-model="currentParkingLot.address" type="text" placeholder="Nombre"
+        <input v-model="currentParkingLot.address" type="text" placeholder="Dirección"
           class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
       </div>
       <div class="mb-4">
@@ -196,23 +195,23 @@ const isActive = computed(() => currentParkingLot.value.status === 'A');
           class="w-full p-2 border border-gray-3    00 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
       </div>
       <div class="mb-4">
-        <input v-model="currentParkingLot.nit" type="text" placeholder="Cedula"
+        <input v-model="currentParkingLot.nit" type="text" placeholder="NIT"
           class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
       </div>
 
       <div class="mb-4">
-        <input v-model="currentParkingLot.coordX" type="text" placeholder="Correo"
+        <input v-model="currentParkingLot.coordX" type="text" placeholder="Coordenada X"
           class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
       </div>
 
       <div class="mb-4">
-        <input v-model="currentParkingLot.coordY" type="text" placeholder="Correo"
+        <input v-model="currentParkingLot.coordY" type="text" placeholder="Coordenada Y"
           class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
       </div>
 
       <div class="mb-4">
-        <select class="form-select" v-model="currentParkingLot.user?.idUser" required>
-          <option disabled value="">Select User</option>
+        <select class="form-select" v-model="currentParkingLot.user.idUser" required>
+          <option disabled value="">Seleccione Usuario</option>
           <option v-for="user in users" :key="user.idUser" :value="user.idUser">
             {{ user.name }}
           </option>

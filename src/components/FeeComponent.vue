@@ -1,88 +1,97 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from "vue";
-import { AddOnServiceDto, ParkingLotDto } from "@/models/models"; //
-import parkingLotService from "@/services/ParkingLotService";
-import addOnServicesService from "@/services/AddOnServicesService";
+import { FeeDto, ParkingLotDto, VehicleTypeDto } from "@/models/models"; //
+import feeService from "@/services/FeeService";
+import VehicleTypeService from "@/services/VehicleTypeService";
+import ParkingLotService from "@/services/ParkingLotService";
 
-const addOnservices = ref<AddOnServiceDto[]>([]);
-const newAddOnservice = ref<AddOnServiceDto>({
-    idAddOnService: 0,
-    name: '',
-    price: 0,
-    parkingLot: new ParkingLotDto,
-    status: ''
+const fees = ref<FeeDto[]>([]);
+const newFee = ref<FeeDto>({
+  idFee: 0,
+  name: '',
+  price: 0,
+  parkingLot: new ParkingLotDto,
+  vehicleType: new VehicleTypeDto,
+  status: '',
 });
-const editingAddOnService = ref<AddOnServiceDto | null>(null);
+const editingFee = ref<FeeDto | null>(null);
 
+const vehicles = ref<VehicleTypeDto[]>([]);
 const parkingLots = ref<ParkingLotDto[]>([]);
 
 
 onMounted(async () => {
-  await loadParkingLots();
-  await loadAddOnService();
-
-
+  await loadFee();
+  await loadVehicleType();
+  await loadParkingLot();
 });
 
 // Cargar paymentMethods desde el servicio
-const loadAddOnService = async () => {
+const loadFee = async () => {
   try {
-    addOnservices.value = await addOnServicesService.getAddOnServices();
+    fees.value = await feeService.getFees();
   } catch (error) {
-    console.error('Error al cargar métodos de pago:', error);
+    console.error('Error al cargar tarifas:', error);
   }
 };
 
 
 
-const loadParkingLots = async () => {
+const loadVehicleType = async () => {
   try {
-    parkingLots.value = await parkingLotService.getParkingLots();
-    console.log('Parqueaderso cargados:', parkingLots.value); // Verifica que los roles se carguen correctamente
+    vehicles.value = await VehicleTypeService.getVehicleType();
   } catch (error) {
-    console.error('Error al cargar roles:', error);
+    console.error('Error al cargar vehiculos:', error);
+  }
+};
+
+const loadParkingLot = async () => {
+  try {
+    parkingLots.value = await ParkingLotService.getParkingLots();
+  } catch (error) {
+    console.error('Error al cargar parqueaderos:', error);
   }
 };
 
 // Crear un nuevo método de pago
-const createAddOnService = async () => {
+const createFee = async () => {
   try {
-    await addOnServicesService.createAddOnService(newAddOnservice.value);
+    await feeService.createFee(newFee.value);
     resetForm(); // Reiniciar el formulario
-    await loadAddOnService(); // Recargar métodos de pago
+    await loadFee(); // Recargar métodos de pago
   } catch (error) {
     console.error('Error al crear:', error);
   }
 };
 
-const editAddOnService = (addOnService: AddOnServiceDto) => {
-  editingAddOnService.value = { ...addOnService };
+const editFee = (fee: FeeDto) => {
+  editingFee.value = { ...fee };
 };
 
-const updateAddOnService = async () => {
-  if (editingAddOnService.value) {
+const updateFee = async () => {
+  if (editingFee.value) {
     try {
-      await parkingLotService.updateParkingLot(editingAddOnService.value);
+      await feeService.updateFee(editingFee.value);
       resetForm();
-      await loadAddOnService();
+      await loadFee();
     } catch (error) {
       console.error('Error al actualizar:', error);
     }
   }
 };
 
-const upgradeAddOnService = async (addOnService: AddOnServiceDto) => {
+const upgradeFee = async (fee: FeeDto) => {
   try {
-    const newStatus = addOnService.status === 'A' ? 'I' : 'A';
-    const upgradeAddOnService = { ...addOnService, status: newStatus };
+    const newStatus = fee.status === 'A' ? 'I' : 'A';
+    const upgradeFee = { ...fee, status: newStatus };
 
-    const response = await addOnServicesService.updateStatus(upgradeAddOnService);
+    const response = await feeService.updateStatus(upgradeFee);
 
     const updatedStatus = response.status ? response.status : newStatus; // Asigna el nuevo estado
 
-    const index = addOnservices.value.findIndex((p: AddOnServiceDto) => p.idAddOnService === upgradeAddOnService.idAddOnService);
+    const index = fees.value.findIndex((p: FeeDto) => p.idFee === upgradeFee.idFee);
     if (index !== -1) {
-        addOnservices.value[index].status = updatedStatus;
+      fees.value[index].status = updatedStatus;
     }
 
   } catch (error) {
@@ -92,42 +101,43 @@ const upgradeAddOnService = async (addOnService: AddOnServiceDto) => {
 
 // Reiniciar el formulario
 const resetForm = () => {
-    newAddOnservice.value = {
-    idAddOnService: 0,
+   newFee.value = {
+    idFee: 0,
     name: '',
     price: 0,
     parkingLot: new ParkingLotDto,
+    vehicleType: new VehicleTypeDto,
     status: ''
   };
-  editingAddOnService.value = null;
+  editingFee.value = null;
 };
 
 // Computed property para filtrar métodos de pago activos
-const activeAddOnService = computed(() => {
-  return addOnservices.value.filter((addOnService: AddOnServiceDto) => addOnService.status === 'A');
+const ActiveFees = computed(() => {
+  return fees.value.filter((fee: FeeDto) => fee.status === 'A');
 });
 
 // Computed properties para manejar el formulario
-const currentAddOnService = computed(() => {
-  return editingAddOnService.value || newAddOnservice.value;
+const currentFees = computed(() => {
+  return editingFee.value || newFee.value;
 });
 
 const toggleStatus = () => {
-  if (currentAddOnService.value.status === 'A') {
-    currentAddOnService.value.status = 'I';
+  if (currentFees.value.status === 'A') {
+    currentFees.value.status = 'I';
   } else {
-    currentAddOnService.value.status = 'A';
+    currentFees.value.status = 'A';
   }
 };
 
-const isActive = computed(() => currentAddOnService.value.status === 'A');
+const isActive = computed(() => currentFees.value.status === 'A');
 
 </script>
 
 <template>
-  <div class="container mx-auto p-6 grid grid-cols-2 gap 20" >
+  <div class="container mx-auto p-6 grid grid-cols-" >
     <div class="payment-methods-list mb-8">
-      <h2 class="text-2xl font-semibold mb-4">Lista de Servicios</h2>
+      <h2 class="text-2xl font-semibold mb-4">Lista de Tarifas</h2>
 
       <div class="overflow-x-auto bg-white shadow-md rounded-lg">
         <table class="user-lis">
@@ -136,23 +146,23 @@ const isActive = computed(() => currentAddOnService.value.status === 'A');
               <th class="py-2 px-4 border-b text-left">Nombre</th>
               <th class="py-2 px-4 border-b text-left">Precio</th>
               <th class="py-2 px-4 border-b text-left">Parqueadero</th>
+              <th class="py-2 px-4 border-b text-left">Tipo de vehiculo</th>
               <th class="py-2 px-4 border-b text-left">Estado</th>
 
             </tr>
           </thead>
           <tbody>
-            <tr v-for="addOnService in activeAddOnService" :key="addOnService.idAddOnService" class="border-b">
-              <td class="py-2 px-4">{{ addOnService.name }}</td>
-              <td class="py-2 px-4">{{ addOnService.price }}</td>
-              <td class="py-2 px-4">{{ addOnService.parkingLot?.name }}</td>
-              <td class="py-2 px-4">{{ addOnService.status }}</td>
-
-
+            <tr v-for="fee in ActiveFees" :key="fee.idFee" class="border-b">
+              <td class="py-2 px-4">{{ fee.name }}</td>
+              <td class="py-2 px-4">{{ fee.price }}</td>
+              <td class="py-2 px-4">{{ fee.parkingLot?.name }}</td>
+              <td class="py-2 px-4">{{ fee.vehicleType?.name }}</td>
+              <td class="py-2 px-4">{{ fee.status }}</td>
 
               <td class="py-2 px-4">
-                <button @click="editAddOnService(addOnService)"
+                <button @click="editFee(fee)"
                   class="bg-blue-500 text-white py-1 px-3 rounded hover:bg-blue-600 mr-2">Editar</button>
-                <button @click="upgradeAddOnService(addOnService)"
+                <button @click="upgradeFee(fee)"
                   class="bg-red-500 text-white py-1 px-3 rounded hover:bg-red-600">Eliminar</button>
               </td>
             </tr>
@@ -161,24 +171,33 @@ const isActive = computed(() => currentAddOnService.value.status === 'A');
       </div>
 
       <!-- Condición para mostrar mensaje cuando no hay métodos de pago activos -->
-      <p v-if="!activeAddOnService.length" class="text-center text-gray-500 mt-4">No hay servicios disponibles.</p>
+      <p v-if="!ActiveFees.length" class="text-center text-gray-500 mt-4">No hay tarifas disponibles.</p>
     </div>
 
     <div class="payment-methods-form bg-white shadow-md p-6 rounded-lg">
-      <h2 class="text-2xl font-semibold mb-4">{{ editingAddOnService ? 'Editar Servicio' : 'Crear Servicio' }}</h2>
+      <h2 class="text-2xl font-semibold mb-4">{{ editingFee ? 'Editar Tarifa' : 'Crear Tarifa' }}</h2>
+
       <div class="mb-4">
-        <input v-model="currentAddOnService.name" type="text" placeholder="Nombre de Servicio"
+        <input v-model="currentFees.name" type="text" placeholder="Nombre"
           class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
       </div>
       <div class="mb-4">
-        <input v-model="currentAddOnService.price" type="text" placeholder="Precio"
+        <input v-model="currentFees.price" type="text" placeholder="Precio"
           class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
       </div>
       <div class="mb-4">
-        <select class="form-select" v-model="currentAddOnService.parkingLot.idParkingLot" required>
-          <option disabled value="">Select Parqueadero</option>
+        <select class="form-select" v-model="currentFees.parkingLot.idParkingLot" required>
+          <option disabled value="">Select Parking Lot</option>
           <option v-for="parkingLot in parkingLots" :key="parkingLot.idParkingLot" :value="parkingLot.idParkingLot">
             {{ parkingLot.name }}
+          </option>
+        </select>
+      </div>
+      <div class="mb-4">
+        <select class="form-select" v-model="currentFees.vehicleType.idVehicleType" required>
+          <option disabled value="">Select Vehicle</option>
+          <option v-for="vehicle in vehicles" :key="vehicle.idVehicleType" :value="vehicle.idVehicleType">
+            {{ vehicle.name }}
           </option>
         </select>
       </div>
@@ -189,12 +208,12 @@ const isActive = computed(() => currentAddOnService.value.status === 'A');
       </div>
 
       <div class="flex items-center space-x-4">
-        <button @click="editingAddOnService ? updateAddOnService() : createAddOnService()"
+        <button @click="editingFee ? updateFee() : createFee()"
           class="bg-green-500 text-white py-2 px-6 rounded hover:bg-green-600">
-          {{ editingAddOnService ? 'Actualizar Servicio' : 'Crear Servicio' }}
+          {{ editingFee ? 'Actualizar Tarifa' : 'Crear Tarifa' }}
         </button>
 
-        <button @click="resetForm" v-if="editingAddOnService"
+        <button @click="resetForm" v-if="editingFee"
           class="bg-gray-400 text-white py-2 px-6 rounded hover:bg-gray-500">
           Cancelar
         </button>
