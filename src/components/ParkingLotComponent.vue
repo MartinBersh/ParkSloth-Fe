@@ -28,12 +28,12 @@ onMounted(async () => {
 
 });
 
-// Cargar paymentMethods desde el servicio
+
 const loadUser = async () => {
   try {
     users.value = await userService.getUsers();
   } catch (error) {
-    console.error('Error al cargar métodos de pago:', error);
+    console.error('Error al cargar usuarios:', error);
   }
 };
 
@@ -48,7 +48,7 @@ const loadParkingLots = async () => {
   }
 };
 
-// Crear un nuevo método de pago
+// Crear un nuevo parqueadero
 const createParkingLot = async () => {
   try {
     await parkingLotService.createParkingLot(newParkingLot.value);

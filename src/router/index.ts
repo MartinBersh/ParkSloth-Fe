@@ -9,8 +9,13 @@ import FeeComponent from '@/components/FeeComponent.vue';
 import ScheduleComponent from '@/components/ScheduleComponent.vue';
 import ReservationComponent from '@/components/ReservationComponent.vue';
 import SlotComponent from '@/components/SlotComponent.vue';
+import LoginComponent from '@/components/LoginComponent.vue';
 
 const routes: Array<RouteRecordRaw> = [
+  {
+    path: '/',
+    redirect: '/login', 
+  },
   {
     path: '/about',
     name: 'about',
@@ -34,6 +39,11 @@ const routes: Array<RouteRecordRaw> = [
     path: '/user',
     name: 'User',
     component: UserComponent
+  },
+  {
+    path: '/login',
+    name: 'Login',
+    component: LoginComponent,
   },
   {
     path: '/parking-lot',
