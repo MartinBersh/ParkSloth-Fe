@@ -32,7 +32,6 @@
             </div>
             <div v-if="role =='ROLE_ADMINP'" class="py-1" role="none">
               
-
             </div>
           </div>
         </div>
