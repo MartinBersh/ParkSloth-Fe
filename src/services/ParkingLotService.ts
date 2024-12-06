@@ -28,5 +28,9 @@ export default {
     async updateStatus(parkingLot: ParkingLotDto): Promise<ParkingLotDto> {
         const response = await axios.patch(`${API_URL}/status`, parkingLot);
         return response.data;
+    },
+    async getParkingLot(parkingLot: ParkingLotDto): Promise<string>{
+        const response = await axios.post(`${API_URL}/get/${parkingLot.idParkingLot}`);
+        return response.data;
     }
 };

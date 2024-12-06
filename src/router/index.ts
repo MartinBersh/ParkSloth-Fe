@@ -10,6 +10,7 @@ import ScheduleComponent from '@/components/ScheduleComponent.vue';
 import ReservationComponent from '@/components/ReservationComponent.vue';
 import SlotComponent from '@/components/SlotComponent.vue';
 import LoginComponent from '@/components/LoginComponent.vue';
+import MapComponent from '@/components/MapComponent.vue';
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -28,6 +29,12 @@ const routes: Array<RouteRecordRaw> = [
     path: '/payment-method',
     name: 'PaymentMethod',
     component: PaymentMethodView
+  
+  },
+  {
+    path: '/map',
+    name: 'Map',
+    component: MapComponent
   
   },
   {
